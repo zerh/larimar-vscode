@@ -24,6 +24,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     context.subscriptions.push(
         vscode.commands.registerCommand("larimar.restartServer", async () => {
             await stopServer();
+            registerFormatter(context);
             await startServer(context);
         }),
         vscode.commands.registerCommand("larimar.run", () => runInTerminal("run")),
