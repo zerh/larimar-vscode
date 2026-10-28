@@ -1,0 +1,255 @@
+{
+  "name": "larimar",
+  "displayName": "Larimar",
+  "description": "Larimar language support: syntax, live errors, hover, go to definition, references, symbols, completion, signature help (larimar lsp) and debugging (lldb or gdb).",
+  "version": "0.7.0",
+  "publisher": "larimar",
+  "icon": "./img/larimar2.png",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zerh/larimar-vscode.git",
+    "directory": "editors/vscode"
+  },
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Debuggers"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:**/larimar.toml",
+    "onDebugResolve:larimar",
+    "onDebugInitialConfigurations"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "larimar",
+        "aliases": [
+          "Larimar",
+          "larimar"
+        ],
+        "extensions": [
+          ".lar"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "larimar",
+        "scopeName": "source.larimar",
+        "path": "./syntaxes/larimar.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "Larimar",
+      "properties": {
+        "larimar.home": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Larimar's installation folder (the one with `bin/larimarc` and `std/`). Empty: `LARIMAR_HOME`, then `larimar` on the `PATH`, then your login shell's `LARIMAR_HOME`."
+        },
+        "larimar.server.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Start the language server (larimar lsp). Off: only the syntax colors."
+        },
+        "larimar.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Log the messages between VS Code and the language server (Output > Larimar)."
+        },
+        "larimar.debugger": {
+          "type": "string",
+          "enum": [
+            "larimar",
+            "codelldb",
+            "gdb",
+            "lldb-mi"
+          ],
+          "default": "larimar",
+          "markdownDescription": "The debugger for Larimar programs. `larimar` (recommended): Larimar's own debugger, `larimar dap`, over LLVM's `lldb-dap`; it shows Larimar names, values and the call stack. `codelldb`: [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb) with the formatters. `gdb`, `lldb-mi`: the C/C++ extension."
+        },
+        "larimar.lldbDap": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path to LLVM's `lldb-dap` (used by `larimar dap`). Empty: Xcode's on macOS (`xcrun --find lldb-dap`), then `lldb-dap` on the `PATH` (also `lldb-dap-18`, `lldb-vscode`...) and Homebrew's LLVM."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "larimar.restartServer",
+        "title": "Restart Language Server",
+        "category": "Larimar"
+      },
+      {
+        "command": "larimar.run",
+        "title": "Run Project",
+        "category": "Larimar",
+        "icon": "$(play)"
+      },
+      {
+        "command": "larimar.build",
+        "title": "Build Project",
+        "category": "Larimar"
+      },
+      {
+        "command": "larimar.check",
+        "title": "Check Project",
+        "category": "Larimar"
+      },
+      {
+        "command": "larimar.showC",
+        "title": "Show Generated C",
+        "category": "Larimar"
+      },
+      {
+        "command": "larimar.debug",
+        "title": "Debug Project",
+        "category": "Larimar",
+        "icon": "$(debug-alt)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "larimar.showC",
+          "when": "editorLangId == larimar"
+        }
+      ],
+      "editor/title/run": [
+        {
+          "command": "larimar.run",
+          "when": "editorLangId == larimar",
+          "group": "navigation@1"
+        },
+        {
+          "command": "larimar.debug",
+          "when": "editorLangId == larimar",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "breakpoints": [
+      {
+        "language": "larimar"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "larimar",
+        "label": "Larimar",
+        "languages": [
+          "larimar"
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "properties": {
+              "project": {
+                "type": "string",
+                "description": "The project's folder (the one with larimar.toml). Default: the project of the open file.",
+                "default": "${workspaceFolder}"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Arguments for the program.",
+                "default": []
+              },
+              "cwd": {
+                "type": "string",
+                "description": "Folder the program runs in. Default: the project's folder.",
+                "default": "${workspaceFolder}"
+              },
+              "env": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Environment variables for the program.",
+                "default": {}
+              },
+              "stopOnEntry": {
+                "type": "boolean",
+                "description": "Stop at the start of main.",
+                "default": false
+              },
+              "debugger": {
+                "type": "string",
+                "enum": [
+                  "larimar",
+                  "codelldb",
+                  "gdb",
+                  "lldb-mi"
+                ],
+                "description": "larimar: Larimar's own debugger (larimar dap, over lldb-dap): Larimar names and values. codelldb, gdb, lldb-mi: through those extensions, with the formatters. Default: the larimar.debugger setting.",
+                "default": "larimar"
+              },
+              "console": {
+                "type": "string",
+                "enum": [
+                  "debugConsole",
+                  "integratedTerminal"
+                ],
+                "description": "Where the program's output goes (integratedTerminal: also for programs that read the keyboard).",
+                "default": "debugConsole"
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "type": "larimar",
+            "request": "launch",
+            "name": "Debug Larimar project",
+            "project": "${workspaceFolder}",
+            "args": []
+          }
+        ],
+        "configurationSnippets": [
+          {
+            "label": "Larimar: Debug project",
+            "description": "Builds with larimar build --debug and starts the debugger",
+            "body": {
+              "type": "larimar",
+              "request": "launch",
+              "name": "Debug Larimar project",
+              "project": "^\"\\${workspaceFolder}\"",
+              "args": []
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.82.0",
+    "@vscode/vsce": "^3.2.0",
+    "typescript": "^5.4.0"
+  },
+  "overrides": {
+    "@azure/msal-node": "^7.1.2"
+  }
+}
