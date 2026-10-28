@@ -1,0 +1,46 @@
+name: Release VS Code Extension
+
+on:
+  push:
+    tags:
+      - 'v*' # Se activa al subir tags como v0.7.0
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile extension
+        run: npm run compile
+
+      - name: Package extension into .vsix
+        run: npx vsce package
+
+      - name: Get tag version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Create GitHub Release and Upload VSIX
+        uses: softprops/action-gh-release@v1
+        with:
+          files: '*.vsix'
+          name: Larimar v${{ env.VERSION }}
+          body: |
+            Lanzamiento automático de Larimar extension v${{ env.VERSION }}.
+            Puedes descargar el archivo `.vsix` e instalarlo manualmente en VS Code.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

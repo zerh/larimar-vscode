@@ -28,7 +28,7 @@ This Visual Studio Code extension provides support for Larimar programming langu
 
 # Features
 
-## Writing Larimar in VS Code
+## Writing Larimar in VSCode
 <div align="center">
   <img src="img/coding.gif" 
   alt="Larimar demo" style="margin-left:-10px;

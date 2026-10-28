@@ -8,8 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zerh/larimar-vscode.git",
-    "directory": "editors/vscode"
+    "url": "https://github.com/zerh/larimar-vscode.git"
   },
   "engines": {
     "vscode": "^1.82.0"
