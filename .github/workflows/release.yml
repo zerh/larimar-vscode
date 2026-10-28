@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*' # Se activa al subir tags como v0.7.0
 
+permissions:
+  contents: write # <-- Esto soluciona el error de permisos en la Release
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
