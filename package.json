@@ -2,7 +2,7 @@
   "name": "larimar",
   "displayName": "Larimar",
   "description": "Larimar language support: syntax, live errors, hover, go to definition, references, symbols, completion, signature help (larimar lsp) and debugging (lldb or gdb).",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "publisher": "larimar",
   "icon": "./img/larimar2.png",
   "license": "MIT",

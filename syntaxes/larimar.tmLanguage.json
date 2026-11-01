@@ -578,6 +578,13 @@
           }
         },
         {
+          "match": "\\b(thread)\\s+(safe)\\b",
+          "captures": {
+            "1": { "name": "keyword.other.larimar" },
+            "2": { "name": "keyword.other.larimar" }
+          }
+        },
+        {
           "comment": "in default / in heap: where something lives (default here is not the one of switch)",
           "match": "\\b(in)\\s+(default|heap|self)\\b",
           "captures": {

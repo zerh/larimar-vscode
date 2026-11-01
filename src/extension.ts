@@ -8,6 +8,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as cp from "child_process";
+import * as os from "os";
 import * as vscode from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node";
 
@@ -24,7 +25,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     context.subscriptions.push(
         vscode.commands.registerCommand("larimar.restartServer", async () => {
             await stopServer();
-            registerFormatter(context);
             await startServer(context);
         }),
         vscode.commands.registerCommand("larimar.run", () => runInTerminal("run")),
@@ -48,6 +48,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         })
     );
 
+    registerFormatter(context);
     await startServer(context);
 }
 
@@ -90,7 +91,7 @@ function findHome(): string | undefined {
 }
 
 function expandHome(p: string): string {
-    if (p === "~" || p.startsWith("~/")) { return path.join(process.env.HOME ?? "", p.slice(1)); }
+    if (p === "~" || p.startsWith("~/") || p.startsWith("~\\")) { return path.join(os.homedir(), p.slice(1)); }
     return p;
 }
 
@@ -187,8 +188,30 @@ function projectFolder(): string | undefined {
     return undefined;
 }
 
-function quote(s: string): string {
-    return process.platform === "win32" ? `"${s}"` : `'${s.replace(/'/g, "'\\''")}'`;
+type Shell = "posix" | "powershell" | "cmd";
+
+/** The shell of the integrated terminal: on Windows usually PowerShell, also cmd or Git Bash. */
+function terminalShell(): Shell {
+    const shell = (vscode.env.shell || "").toLowerCase();
+    if (process.platform !== "win32") { return "posix"; }
+    if (shell.includes("pwsh") || shell.includes("powershell")) { return "powershell"; }
+    if (shell.includes("bash") || shell.includes("zsh") || shell.endsWith("sh.exe")) { return "posix"; }
+    return "cmd";
+}
+
+function quote(s: string, shell: Shell = terminalShell()): string {
+    switch (shell) {
+        case "powershell": return `'${s.replace(/'/g, "''")}'`;
+        case "cmd": return `"${s}"`;
+        default: return `'${s.replace(/'/g, "'\\''")}'`;
+    }
+}
+
+/** A command line for the terminal: PowerShell runs a quoted path only after the call operator, &. */
+function commandLine(exe: string, args: string[]): string {
+    const shell = terminalShell();
+    const line = [exe, ...args].map((a) => quote(a, shell)).join(" ");
+    return shell === "powershell" ? `& ${line}` : line;
 }
 
 async function runInTerminal(what: "run" | "build" | "check"): Promise<void> {
@@ -202,9 +225,9 @@ async function runInTerminal(what: "run" | "build" | "check"): Promise<void> {
     if (file?.isDirty) { await file.save(); }
     let target: string;
     if (folder) {
-        target = quote(folder);
+        target = folder;
     } else if (what === "check" && file?.languageId === "larimar") {
-        target = quote(file.uri.fsPath);
+        target = file.uri.fsPath;
     } else {
         vscode.window.showWarningMessage("No larimar.toml above this file: larimar run and build work on projects (larimar new <name>).");
         return;
@@ -213,7 +236,7 @@ async function runInTerminal(what: "run" | "build" | "check"): Promise<void> {
         terminal = vscode.window.createTerminal({ name: "Larimar", env: { LARIMAR_HOME: home } });
     }
     terminal.show(true);
-    terminal.sendText(`${quote(path.join(home, "bin", EXE))} ${what} ${target}`);
+    terminal.sendText(commandLine(path.join(home, "bin", EXE), [what, target]));
 }
 
 async function showGeneratedC(): Promise<void> {
