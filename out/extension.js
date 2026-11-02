@@ -74,7 +74,8 @@ async function activate(context) {
     }));
     registerFormatter(context);
     (0, testing_1.registerTests)(context, findHome, output); // the Testing view: larimar test --list/--json
-    await startServer(context);
+    // not awaited: the commands work at once, also while the server starts (or if it does not)
+    startServer(context).catch((e) => output.appendLine(`The language server did not start: ${e}`));
 }
 async function deactivate() {
     await stopServer();
@@ -166,10 +167,12 @@ async function startServer(context) {
     }
     const home = findHome();
     if (!home) {
-        const choice = await vscode.window.showWarningMessage("Larimar was not found: set LARIMAR_HOME or the larimar.home setting to the folder that has bin/larimarc. Only the colors will work until then.", "Open Settings");
-        if (choice === "Open Settings") {
-            await vscode.commands.executeCommand("workbench.action.openSettings", "larimar.home");
-        }
+        vscode.window.showWarningMessage(// not awaited: the notification may stay open
+        "Larimar was not found: set LARIMAR_HOME or the larimar.home setting to the folder that has bin/larimarc. Only the colors will work until then.", "Open Settings").then((choice) => {
+            if (choice === "Open Settings") {
+                vscode.commands.executeCommand("workbench.action.openSettings", "larimar.home");
+            }
+        });
         return;
     }
     const command = path.join(home, "bin", EXE);
