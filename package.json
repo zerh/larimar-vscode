@@ -1,8 +1,8 @@
 {
   "name": "larimar",
   "displayName": "Larimar",
-  "description": "Larimar language support: syntax, live errors, hover, go to definition, references, symbols, completion, signature help (larimar lsp) and debugging (lldb or gdb).",
-  "version": "0.7.1",
+  "description": "Larimar language support: syntax, live errors, hover, go to definition, references, symbols, completion, signature help (larimar lsp), debugging (lldb or gdb) and the tests in the Testing view.",
+  "version": "0.8.0",
   "publisher": "larimar",
   "icon": "./img/larimar2.png",
   "license": "MIT",
@@ -16,7 +16,8 @@
   "categories": [
     "Programming Languages",
     "Linters",
-    "Debuggers"
+    "Debuggers",
+    "Testing"
   ],
   "main": "./out/extension.js",
   "activationEvents": [

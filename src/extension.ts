@@ -3,7 +3,8 @@
 // completion, signature help). It also debugs: `larimar build --debug` writes the C with #line to the
 // .lar files and a debug map, and `larimar dap` (the debugger, written in Larimar, over lldb-dap) shows
 // breakpoints, steps, the stack and the values as Larimar. CodeLLDB or the C/C++ extension with gdb
-// (with the formatters of $LARIMAR_HOME/debug) remain as alternatives (larimar.debugger).
+// (with the formatters of $LARIMAR_HOME/debug) remain as alternatives (larimar.debugger). The tests show
+// in the Testing view (testing.ts).
 
 import * as fs from "fs";
 import * as path from "path";
@@ -11,6 +12,7 @@ import * as cp from "child_process";
 import * as os from "os";
 import * as vscode from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node";
+import { registerTests } from "./testing";
 
 let client: LanguageClient | undefined;
 let output: vscode.OutputChannel;
@@ -49,6 +51,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     );
 
     registerFormatter(context);
+    registerTests(context, findHome, output);       // the Testing view: larimar test --list/--json
     await startServer(context);
 }
 
