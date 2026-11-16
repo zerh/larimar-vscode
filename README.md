@@ -32,7 +32,7 @@ The extension works with Larimar 1.12 or later.
 
 ## Writing Larimar in VSCode
 <div align="center">
-  <img src="img/coding.gif" 
+  <img src="https://github.com/zerh/larimar-vscode/raw/HEAD/img/coding.gif" 
   alt="Larimar demo" style="margin-left:-10px;
   margin-bottom: -10px;
   clip-path: inset(4px); max-width:800px;-webkit-mask-image: radial-gradient(circle, black 70%, transparent 100%); mask-image: radial-gradient(circle, black 70%, transparent 100%);" />
@@ -67,7 +67,7 @@ Run Larimar: Debug Project (or press F5) to build your program with debug inform
 
 ## Commands
 <div align="center">
-  <img src="img/commands.gif" 
+  <img src="https://github.com/zerh/larimar-vscode/raw/HEAD/img/commands.gif" 
   alt="Larimar demo" style="margin-top: -10px; clip-path: inset(4px); max-width:800px;-webkit-mask-image: radial-gradient(circle, black 70%, transparent 100%); mask-image: radial-gradient(circle, black 70%, transparent 100%);" />
 </div>
 
@@ -82,7 +82,7 @@ Run Larimar: Debug Project (or press F5) to build your program with debug inform
 
 
 <div style="display: flex; align-items: flex-start; gap: 20px;">
-  <img src="img/tests.gif" width="180" alt="GIF">
+  <img src="https://github.com/zerh/larimar-vscode/raw/HEAD/img/tests.gif" width="180" alt="GIF">
   <div>
     The tests of your project show in VS Code's **Testing** view (the flask icon), and next to each
 `test function` in the editor:
