@@ -3,7 +3,7 @@
   
 
   <p>
-    <img src="https://img.shields.io/badge/version-0.7.0-3fc9c4?style=flat-square" alt="Version">
+    <img src="https://img.shields.io/badge/version-0.9.0-3fc9c4?style=flat-square" alt="Version">
     <!-- <img src="https://img.shields.io/badge/transpila_a-C99-6ee7b7?style=flat-square" alt="Transpiles to C99">
     <img src="https://img.shields.io/badge/GC-sin_recolector-34d399?style=flat-square" alt="No GC"> -->
     <img src="https://img.shields.io/badge/licencia-MIT-828e9c?style=flat-square" alt="MIT">
@@ -24,6 +24,8 @@ This Visual Studio Code extension provides support for Larimar programming langu
    and `std/`) in the **Larimar: Home** field, for example `/Users/you/larimar`.
    It saves automatically.
 
+The extension works with Larimar 1.12 or later.
+
 ---
 
 # Features
@@ -38,7 +40,7 @@ This Visual Studio Code extension provides support for Larimar programming langu
 
 The extension starts the Larimar language server (larimar lsp) in the background, so the editor understands your code while you write it:
 
-Syntax highlighting for all of Larimar, including #when, wait until and released by.
+Syntax highlighting for all of Larimar 1.12, including test functions, wait until, thread safe and released by, and the C of the standard library: native interfaces, `ccode` blocks and native functions with a body of C are colored as C, with `lar"NAME"`, `c"..."` and the runtime's names (`LarMemory`, `lar_...`, `LAR_...`).
 Errors as you type. The same messages as the compiler, underlined in place, across every file of the project, also for unsaved changes.
 Hover over a name to see its type, its signature and the comment written above its declaration.
 Go to Definition of functions, types, fields and variables, even in other modules or in the standard library.

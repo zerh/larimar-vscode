@@ -10,19 +10,22 @@
       "include": "#c-code"
     },
     {
+      "include": "#native-function"
+    },
+    {
       "include": "#raw-text-blocks"
     },
     {
       "include": "#text-blocks"
     },
     {
+      "include": "#c-text"
+    },
+    {
       "include": "#strings"
     },
     {
       "include": "#characters"
-    },
-    {
-      "include": "#extern-type"
     },
     {
       "include": "#declarations"
@@ -68,8 +71,9 @@
     "c-code": {
       "patterns": [
         {
+          "comment": "ccode { C }: copied to the generated C (std only, Appendix D.2)",
           "name": "meta.embedded.block.c.larimar",
-          "begin": "\\b(c_code)\\b\\s*(\\{)",
+          "begin": "\\b(ccode)\\s*(\\{)",
           "beginCaptures": {
             "1": {
               "name": "keyword.declaration.c-code.larimar"
@@ -94,6 +98,9 @@
     },
     "c-body": {
       "patterns": [
+        {
+          "include": "#c-lar-names"
+        },
         {
           "include": "#c-comments"
         },
@@ -238,11 +245,15 @@
       "patterns": [
         {
           "name": "support.type.runtime.larimar",
-          "match": "\\b(?:RtMem|RtString|RtAny|RtSb|RtTable|RtChunk|RtFinal|RtObjHead)\\b"
+          "match": "\\bLar[A-Z][A-Za-z0-9_]*\\b"
+        },
+        {
+          "name": "support.constant.runtime.larimar",
+          "match": "\\bLAR_[A-Z0-9_]+\\b"
         },
         {
           "name": "support.function.runtime.larimar",
-          "match": "\\brt_[A-Za-z0-9_]+(?=\\s*\\()"
+          "match": "\\blar_[A-Za-z0-9_]+(?=\\s*\\()"
         }
       ]
     },
@@ -399,51 +410,23 @@
         }
       ]
     },
-    "extern-type": {
-      "comment": "extern type X;  extern type X = c \"FILE*\";  = struct \"C\" { ... };  = (A, B) -> R;",
+    "declarations": {
       "patterns": [
         {
-          "match": "\\b(extern)\\s+(type)\\s+([\\p{L}_][\\p{L}\\p{N}_]*)",
+          "comment": "test function name: a test (test is a keyword only here)",
+          "match": "\\b(test)\\s+(function)\\s+([\\p{L}_][\\p{L}\\p{N}_]*)",
           "captures": {
             "1": {
-              "name": "keyword.declaration.larimar"
+              "name": "storage.modifier.test.larimar"
             },
             "2": {
               "name": "keyword.declaration.larimar"
             },
             "3": {
-              "name": "entity.name.type.larimar"
+              "name": "entity.name.function.test.larimar"
             }
           }
         },
-        {
-          "comment": "c \"T\": the C spelling of an extern type",
-          "match": "(?<==)\\s*\\b(c)\\s*(\"[^\"]*\")",
-          "captures": {
-            "1": {
-              "name": "keyword.other.c-type.larimar"
-            },
-            "2": {
-              "name": "string.quoted.double.c-type.larimar"
-            }
-          }
-        },
-        {
-          "comment": "struct \"C name\" { after extern type X =",
-          "match": "(?<==)\\s*\\b(struct)\\s*(\"[^\"]*\")?",
-          "captures": {
-            "1": {
-              "name": "keyword.declaration.larimar"
-            },
-            "2": {
-              "name": "string.quoted.double.c-type.larimar"
-            }
-          }
-        }
-      ]
-    },
-    "declarations": {
-      "patterns": [
         {
           "match": "\\b(import)\\s+([\\p{L}_][\\p{L}\\p{N}_]*(?:\\.[\\p{L}_][\\p{L}\\p{N}_]*)*)(?:\\s+(as)\\s+([\\p{L}_][\\p{L}\\p{N}_]*))?",
           "captures": {
@@ -502,10 +485,22 @@
           }
         },
         {
-          "match": "\\b(native)\\s+(type)\\s+([\\p{L}_][\\p{L}\\p{N}_]*)",
+          "match": "\\b(operator)\\s*(==|<|\\+|-|\\*|/|%|\\[\\])",
           "captures": {
             "1": {
               "name": "keyword.declaration.larimar"
+            },
+            "2": {
+              "name": "entity.name.function.operator.larimar"
+            }
+          }
+        },
+        {
+          "comment": "native interface / struct / type NAME (Appendix D)",
+          "match": "\\b(native)\\s+(interface|struct|type)\\s+([\\p{L}_][\\p{L}\\p{N}_]*)",
+          "captures": {
+            "1": {
+              "name": "storage.modifier.larimar"
             },
             "2": {
               "name": "keyword.declaration.larimar"
@@ -516,18 +511,14 @@
           }
         },
         {
-          "comment": "export function: a Larimar function C can call (export is only a keyword here)",
-          "match": "\\b(export)(?=\\s+function\\b)",
-          "name": "storage.modifier.export.larimar"
-        },
-        {
-          "match": "\\b(operator)\\s*(==|<|\\+|-|\\*|/|%|\\[\\])",
+          "comment": "type NAME inside a native interface",
+          "match": "^\\s*(type)\\s+([\\p{L}_][\\p{L}\\p{N}_]*)(?=\\s*(?:=|;|released\\b))",
           "captures": {
             "1": {
               "name": "keyword.declaration.larimar"
             },
             "2": {
-              "name": "entity.name.function.operator.larimar"
+              "name": "entity.name.type.larimar"
             }
           }
         }
@@ -535,26 +526,6 @@
     },
     "keywords": {
       "patterns": [
-        {
-          "comment": "#when <platform>, #else, #end: chosen when the C is compiled, each alone on its line.",
-          "match": "^\\s*(#when)\\s+(windows|macos|linux|unix)\\b",
-          "captures": {
-            "1": {
-              "name": "keyword.control.directive.larimar"
-            },
-            "2": {
-              "name": "constant.language.platform.larimar"
-            }
-          }
-        },
-        {
-          "match": "^\\s*(#else|#end)\\b",
-          "captures": {
-            "1": {
-              "name": "keyword.control.directive.larimar"
-            }
-          }
-        },
         {
           "match": "\\b(released)\\s+(by)\\b",
           "captures": {
@@ -580,8 +551,12 @@
         {
           "match": "\\b(thread)\\s+(safe)\\b",
           "captures": {
-            "1": { "name": "keyword.other.larimar" },
-            "2": { "name": "keyword.other.larimar" }
+            "1": {
+              "name": "keyword.other.larimar"
+            },
+            "2": {
+              "name": "keyword.other.larimar"
+            }
           }
         },
         {
@@ -602,11 +577,11 @@
         },
         {
           "name": "keyword.declaration.larimar",
-          "match": "\\b(function|struct|class|interface|enum|extends|implements|operator|let|const|import|c_include|extern)\\b"
+          "match": "\\b(function|struct|class|interface|enum|extends|implements|operator|let|const|import|cinclude|ccode)\\b"
         },
         {
           "name": "storage.modifier.larimar",
-          "match": "\\b(public|private|static|native|override|synchronized)\\b"
+          "match": "\\b(public|static|native|override|synchronized)\\b"
         },
         {
           "comment": "where something lives: in default, in heap, in <memory>",
@@ -630,9 +605,9 @@
           "match": "\\b(self|super)\\b"
         },
         {
-          "comment": "reserved",
+          "comment": "reserved, and an error: objects are made with literals; what is not public is private",
           "name": "invalid.deprecated.reserved.larimar",
-          "match": "\\bnew\\b"
+          "match": "\\b(new|private)\\b"
         }
       ]
     },
@@ -640,12 +615,12 @@
       "patterns": [
         {
           "name": "support.function.builtin.larimar",
-          "match": "\\b(print|println|panic|release)(?=\\s*\\()"
+          "match": "\\b(print|println|panic|release|stringOf|stringOfRange)(?=\\s*\\()"
         },
         {
           "comment": "methods the compiler knows on lists, Any and objects",
           "name": "support.function.builtin.method.larimar",
-          "match": "(?<=\\.)(push|pop|clear|map|filter|join|clone|contains|containsKey|remove|removeAt|removeIf|wait|notifyAll|start|join)(?=\\s*\\()"
+          "match": "(?<=\\.)(push|pop|clear|map|filter|join|sort|clone|contains|containsKey|remove|removeAt|removeIf|wait|notifyAll|start)(?=\\s*\\()"
         },
         {
           "name": "support.variable.property.larimar",
@@ -715,7 +690,109 @@
         },
         {
           "name": "keyword.operator.larimar",
-          "match": "(\\?\\?|->|==|!=|<=|>=|&&|\\|\\||<<|>>|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|<<=|>>=|[+*/%=&|^~<>!?-])"
+          "match": "(\\?\\?|::|->|==|!=|<=|>=|&&|\\|\\||<<=|>>=|<<|>>|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|[+*/%=&|^~<>!?-])"
+        }
+      ]
+    },
+    "native-function": {
+      "patterns": [
+        {
+          "comment": "native function f(...): T = C;  or  native function f(...): T { C text } (Appendix D.3, D.8)",
+          "begin": "\\b(native)\\s+(function)\\s+([\\p{L}_][\\p{L}\\p{N}_]*)",
+          "beginCaptures": {
+            "1": {
+              "name": "storage.modifier.larimar"
+            },
+            "2": {
+              "name": "keyword.declaration.larimar"
+            },
+            "3": {
+              "name": "entity.name.function.larimar"
+            }
+          },
+          "end": ";|(?<=\\})",
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "name": "meta.embedded.block.c.larimar",
+              "begin": "\\{",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.section.block.begin.larimar"
+                }
+              },
+              "end": "\\}",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.section.block.end.larimar"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#c-body"
+                }
+              ]
+            },
+            {
+              "include": "#c-text"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#types"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        }
+      ]
+    },
+    "c-text": {
+      "patterns": [
+        {
+          "comment": "c\"...\": C text, not a Larimar String (Appendix D.3)",
+          "name": "string.quoted.double.c-text.larimar",
+          "match": "\\b(c)(\\\"[^\\\"\\n]*\\\")",
+          "captures": {
+            "1": {
+              "name": "storage.type.string.c.larimar"
+            },
+            "2": {
+              "name": "markup.raw.c.larimar"
+            }
+          }
+        }
+      ]
+    },
+    "c-lar-names": {
+      "patterns": [
+        {
+          "comment": "lar\"NAME\" inside C: the C name of a Larimar function, type or global (Appendix D.2)",
+          "match": "\\b(lar)(\\\")([\\p{L}_][\\p{L}\\p{N}_.]*)(\\\")",
+          "captures": {
+            "1": {
+              "name": "storage.type.string.lar.larimar"
+            },
+            "2": {
+              "name": "punctuation.definition.string.begin.larimar"
+            },
+            "3": {
+              "name": "entity.name.function.larimar"
+            },
+            "4": {
+              "name": "punctuation.definition.string.end.larimar"
+            }
+          }
         }
       ]
     }
