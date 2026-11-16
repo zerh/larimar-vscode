@@ -64,19 +64,6 @@ Run Larimar: Debug Project (or press F5) to build your program with debug inform
  5. Expressions in Watch and hover, such as order.customer, items[2], points[1].y or names.length.
  6. Panics as exceptions. When the program stops on a runtime error (an index out of range, ! on null, a division by zero), the debugger stops right there and shows the message and the line.
 
-## Tests in the Testing view
-
-The tests of your project show in VS Code's **Testing** view (the flask icon), and next to each
-`test function` in the editor:
-
- 1. Each file of `tests/` with test functions, and each of its tests, at its line. A file that says what it expects (`// expect: run`) is one test.
- 2. Run everything, a file or a single test, from the view or from the green triangle next to the test.
- 3. Passed, failed and skipped, with the message of the check that failed (`check failed: expected 5 but got 4`) shown on the test's line.
- 4. The list updates when you save a `.lar` file, or with the refresh button.
-
-Everything comes from the compiler: `larimar test --list --json` lists the tests, and
-`larimar test --json <file> --test <name>` runs them, each in its own process, with the sanitizers, just
-like `larimar test` in a terminal. It needs Larimar 0.4.1 or later.
 
 ## Commands
 <div align="center">
@@ -89,6 +76,28 @@ like `larimar test` in a terminal. It needs Larimar 0.4.1 or later.
   3. **Larimar: Debug Project** builds with --debug and starts the debugger (larimar dap over lldb-dap), with breakpoints in your .lar files.
   4. **Larimar: Check Project** Looks for errors without generating C or compiling; it’s fast.
   5. **Larimar: Restart Language Server** restarts larimar lsp (live errors, hover, completion). Use it if the editor stops responding or after updating the compiler.
+
+
+## Tests in the Testing view
+
+
+<div style="display: flex; align-items: flex-start; gap: 20px;">
+  <img src="img/tests.gif" width="180" alt="GIF">
+  <div>
+    The tests of your project show in VS Code's **Testing** view (the flask icon), and next to each
+`test function` in the editor:
+
+ 1. Each file of `tests/` with test functions, and each of its tests, at its line. A file that says what it expects (`// expect: run`) is one test.
+ 2. Run everything, a file or a single test, from the view or from the green triangle next to the test.
+ 3. Passed, failed and skipped, with the message of the check that failed (`check failed: expected 5 but got 4`) shown on the test's line.
+ 4. The list updates when you save a `.lar` file, or with the refresh button.
+
+Everything comes from the compiler: `larimar test --list --json` lists the tests, and
+`larimar test --json <file> --test <name>` runs them, each in its own process, with the sanitizers, just
+like `larimar test` in a terminal. It needs Larimar 0.4.1 or later.
+  </div>
+</div>
+
 
 ---
 
