@@ -4,8 +4,6 @@
 
   <p>
     <img src="https://img.shields.io/badge/version-0.9.0-3fc9c4?style=flat-square" alt="Version">
-    <!-- <img src="https://img.shields.io/badge/transpila_a-C99-6ee7b7?style=flat-square" alt="Transpiles to C99">
-    <img src="https://img.shields.io/badge/GC-sin_recolector-34d399?style=flat-square" alt="No GC"> -->
     <img src="https://img.shields.io/badge/licencia-MIT-828e9c?style=flat-square" alt="MIT">
   </p>
 </div>
@@ -13,7 +11,7 @@
 ---
 
 # Larimar Tools for Visual Studio Code
-This Visual Studio Code extension provides support for Larimar programming language
+This Visual Studio Code extension provides support for <a href="https://zerh.github.io/larimar/">Larimar programming language</a>
 
 ---
 # Setup
